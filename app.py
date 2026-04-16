@@ -117,19 +117,25 @@ section[data-testid="stSidebar"] h1 {
 
 /* Radio buttons (navigation items) */
 section[data-testid="stSidebar"] .stRadio > div {
-    gap: 10px;
+    gap: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
 }
 
 section[data-testid="stSidebar"] label {
     background: rgba(30, 41, 59, 0.6);
     padding: 12px 14px;
-    border-radius: 12px;
+    border-radius: 14px;
     border: 1px solid transparent;
     transition: all 0.2s ease;
-    display: block;
-    min-height: 45px;
     display: flex;
     align-items: center;
+    justify-content: flex-start;
+    width: 100%;
+    min-height: 48px;
+    box-sizing: border-box;
 }
 
 /* Hover effect */
@@ -142,7 +148,8 @@ section[data-testid="stSidebar"] label:hover {
 section[data-testid="stSidebar"] input[type="radio"]:checked + div {
     border: 1px solid #6366f1 !important;
     background: rgba(99, 102, 241, 0.25) !important;
-    border-radius: 12px !important;
+    border-radius: 14px !important;
+    width: 100%;
 }
 
 /* ===== Tables ===== */
