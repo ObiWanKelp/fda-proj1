@@ -228,15 +228,11 @@ def show_dataset_overview():
     df = st.session_state.df
     st.markdown("## Dataset Overview")
     st.markdown("Explore the dataset used for training the model.")
-    st.markdown('<div class="card">', unsafe_allow_html=True)
     st.dataframe(df.head())
-    st.markdown('</div>', unsafe_allow_html=True)
-    st.markdown('<div class="card">', unsafe_allow_html=True)
     st.subheader("Category Distribution")
     fig, ax = plt.subplots()
     sns.countplot(data=df, y='type', order=df['type'].value_counts().index, ax=ax)
     st.pyplot(fig)
-    st.markdown('</div>', unsafe_allow_html=True)
 
 # Model performance
 def show_model_performance():
@@ -245,10 +241,8 @@ def show_model_performance():
         return
     st.subheader("Model Performance")
     for name, report in st.session_state.models.items():
-        st.markdown('<div class="card">', unsafe_allow_html=True)
         st.markdown(f"#### {name}")
         st.dataframe(pd.DataFrame(report).transpose())
-        st.markdown('</div>', unsafe_allow_html=True)
         st.subheader("Model Comparison: Precision, Recall & F1-Score")
 
     logreg_df = pd.DataFrame(st.session_state.models['Logistic Regression']).transpose()
@@ -258,7 +252,6 @@ def show_model_performance():
     metrics = ['precision', 'recall', 'f1-score']
 
     for metric in metrics:
-        st.markdown('<div class="card">', unsafe_allow_html=True)
         fig, ax = plt.subplots(figsize=(8, 4))
         ax.bar(label_rows, logreg_df.loc[label_rows, metric], alpha=0.6, label='Logistic Regression')
         ax.bar(label_rows, knn_df.loc[label_rows, metric], alpha=0.6, label='KNN', bottom=logreg_df.loc[label_rows, metric] * 0)
@@ -269,7 +262,6 @@ def show_model_performance():
         ax.set_ylim(0, 1.05)
         plt.xticks(rotation=45)
         st.pyplot(fig)
-        st.markdown('</div>', unsafe_allow_html=True)
     
 def get_recommendations(user_article, df, tfidf_vectorizer, top_n=7):
     tfidf_matrix = tfidf_vectorizer.fit_transform(df['news'])
@@ -311,16 +303,14 @@ def show_recommendations():
         selected_idx = article_choices[selected_label]
         selected_article = filtered_df.loc[selected_idx, 'news']
 
-        st.markdown('<div class="card">', unsafe_allow_html=True)
         st.subheader("Selected Article")
         st.write(selected_article)
-        st.markdown('</div>', unsafe_allow_html=True)
 
         recommendations = get_recommendations(selected_article, df, tfidf, top_n=7)
 
         st.subheader("Recommended Articles")
         for i, rec in enumerate(recommendations['news']):
-            st.markdown(f""" <div class="card"> <b>{i+1}.</b> {rec[:250]}...</div> """, unsafe_allow_html=True)
+            st.write(f"{i+1}. {rec[:250]}...")
 
     elif mode == "By Custom Query":
         user_input = st.text_area("Enter your news interest or custom query")
@@ -416,19 +406,13 @@ def show_prediction():
         probs = model.predict_proba(user_vec)[0]
 
         # 🔥 Result Card
-        st.markdown(f"""
-        <div class="card">
-            <b>Predicted Category:</b> {prediction}<br><br>
-            <b>Confidence:</b> {round(max(probs)*100,2)}%
-        </div>
-        """, unsafe_allow_html=True)
+        st.success(f"Predicted Category: {prediction}")
+        st.info(f"Confidence: {round(max(probs)*100,2)}%")
 
         # Probabilities
-        st.markdown('<div class="card">', unsafe_allow_html=True)
         st.markdown("### Category Probabilities")
         for label, prob in zip(model.classes_, probs):
             st.write(f"{label}: {round(prob*100,2)}%")
-        st.markdown('</div>', unsafe_allow_html=True)
 
         # Keywords
         feature_names = tfidf.get_feature_names_out()
@@ -436,10 +420,8 @@ def show_prediction():
         top_idx = scores.argsort()[-5:][::-1]
         keywords = [feature_names[i] for i in top_idx]
 
-        st.markdown('<div class="card">', unsafe_allow_html=True)
         st.markdown("### Keywords")
         st.write(", ".join(keywords))
-        st.markdown('</div>', unsafe_allow_html=True)
 
 
 def main():
