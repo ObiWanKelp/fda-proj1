@@ -65,7 +65,7 @@ def train_models():
         st.write("📄 Available columns:", df.columns.tolist())
         return
 
-    tfidf = TfidfVectorizer(stop_words='english', max_features=5000)
+    tfidf = TfidfVectorizer(stop_words='english', max_features=8000, ngram_range=(1,2))
     X = tfidf.fit_transform(df['news'])   
     y = df['type']                        
 
@@ -150,7 +150,7 @@ def show_recommendations():
     st.subheader("🔍 Choose Recommendation Mode")
     mode = st.radio("How would you like to get recommendations?", ["By Category & Article", "By Custom Query"])
 
-    tfidf = TfidfVectorizer(stop_words='english', max_features=5000)
+    tfidf = TfidfVectorizer(stop_words='english', max_features=8000, ngram_range=(1,2))
 
     if mode == "By Category & Article":
         all_categories = sorted(df['type'].unique())
@@ -253,7 +253,7 @@ def show_prediction():
         df = st.session_state.df
 
         # Train TF-IDF + model (quick reuse approach)
-        tfidf = TfidfVectorizer(stop_words='english', max_features=5000)
+        tfidf = TfidfVectorizer(stop_words='english', max_features=8000, ngram_range=(1,2))
         X = tfidf.fit_transform(df['news'])
         y = df['type']
 
