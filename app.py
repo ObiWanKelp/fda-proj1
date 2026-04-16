@@ -19,8 +19,8 @@ st.markdown("""
 <style>
 /* ===== Global ===== */
 .stApp {
-    background: linear-gradient(135deg, #0b1220 0%, #111827 50%, #0b1220 100%);
-    color: #e5e7eb;
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+    color: #f1f5f9;
 }
 
 /* Container spacing */
@@ -30,9 +30,9 @@ st.markdown("""
 
 /* Headings */
 h1, h2, h3 {
-    color: #f9fafb;
-    font-weight: 600;
-    letter-spacing: 0.2px;
+    color: #ffffff;
+    font-weight: 700;
+    letter-spacing: 0.3px;
 }
 
 /* Divider */
@@ -42,48 +42,57 @@ hr {
 
 /* ===== Cards ===== */
 .card {
-    background: rgba(17, 24, 39, 0.75);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    padding: 18px 20px;
-    border-radius: 14px;
-    border: 1px solid #1f2937;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
-    margin-bottom: 14px;
+    background: rgba(30, 41, 59, 0.85);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    padding: 20px 22px;
+    border-radius: 16px;
+    border: 1px solid rgba(148, 163, 184, 0.15);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+    margin-bottom: 16px;
+    transition: all 0.25s ease;
+}
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 35px rgba(59, 130, 246, 0.25);
 }
 
 .card-title {
-    font-size: 0.95rem;
-    color: #9ca3af;
+    font-size: 0.9rem;
+    color: #94a3b8;
     margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .card-value {
-    font-size: 1.4rem;
-    color: #f3f4f6;
-    font-weight: 600;
+    font-size: 1.5rem;
+    color: #ffffff;
+    font-weight: 700;
 }
 
 /* ===== Buttons ===== */
 .stButton > button {
-    background: linear-gradient(135deg, #2563eb, #4f46e5);
+    background: linear-gradient(135deg, #3b82f6, #6366f1);
     color: #ffffff;
-    border-radius: 10px;
+    border-radius: 12px;
     padding: 10px 18px;
-    border: 1px solid #1f2937;
+    border: none;
+    font-weight: 600;
     transition: all 0.25s ease;
+    width: 100%;
 }
 .stButton > button:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 8px 18px rgba(37, 99, 235, 0.35);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(59, 130, 246, 0.4);
 }
 
 /* ===== Inputs ===== */
 textarea, .stTextInput > div > div > input {
     background-color: #020617 !important;
-    color: #e5e7eb !important;
-    border-radius: 10px !important;
-    border: 1px solid #1f2937 !important;
+    color: #f1f5f9 !important;
+    border-radius: 12px !important;
+    border: 1px solid #334155 !important;
 }
 
 /* ===== Select & Radio ===== */
@@ -94,7 +103,7 @@ textarea, .stTextInput > div > div > input {
 /* ===== Sidebar ===== */
 section[data-testid="stSidebar"] {
     background: linear-gradient(180deg, #020617 0%, #020617 100%);
-    border-right: 1px solid #1f2937;
+    border-right: 1px solid #334155;
 }
 
 /* ===== Tables ===== */
