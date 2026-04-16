@@ -13,7 +13,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 nltk.download('punkt')
 nltk.download('stopwords')
 
-st.set_page_config(page_title="Personalized News Finder", page_icon="📰", layout="wide")
+st.set_page_config(page_title="Personalized News Finder", page_icon="", layout="wide")
 
 st.markdown("""
 <style>
@@ -79,12 +79,12 @@ def load_dataset():
     try:
         df = pd.read_csv(url, encoding='ISO-8859-1')
         df.columns = df.columns.str.strip().str.replace('\ufeff', '').str.lower()  
-        st.write("📄 Columns in dataset:", df.columns.tolist())
+        st.write("Columns in dataset:", df.columns.tolist())
         st.session_state.df = df
         st.session_state.data_loaded = True
-        st.success("✅ Dataset loaded successfully!")
+        st.success("Dataset loaded successfully")
     except Exception as e:
-        st.error(f"❌ Failed to load dataset: {e}")
+        st.error(f"Failed to load dataset: {e}")
 
 
 # Train models
@@ -92,8 +92,8 @@ def train_models():
     df = st.session_state.df
 
     if 'news' not in df.columns or 'type' not in df.columns:
-        st.error("❌ Required columns 'news' and 'type' not found.")
-        st.write("📄 Available columns:", df.columns.tolist())
+        st.error("Required columns 'news' and 'type' not found")
+        st.write("Columns in dataset:", df.columns.tolist())
         return
 
     tfidf = TfidfVectorizer(stop_words='english', max_features=8000, ngram_range=(1,2))
@@ -117,7 +117,7 @@ def train_models():
         'Logistic Regression': report_lr,
         'K-Nearest Neighbors': report_knn
     }
-    st.success("✅ Models trained successfully!")
+    st.success("Models trained successfully")
 
 # Dataset overview
 def show_dataset_overview():
@@ -125,10 +125,10 @@ def show_dataset_overview():
         st.warning("Load the dataset first.")
         return
     df = st.session_state.df
-    st.markdown("## 📊 Dataset Overview")
+    st.markdown("## Dataset Overview")
     st.markdown("Explore the dataset used for training the model.")
     st.dataframe(df.head())
-    st.subheader("🗂️ Category Distribution")
+    st.subheader("Category Distribution")
     fig, ax = plt.subplots()
     sns.countplot(data=df, y='type', order=df['type'].value_counts().index, ax=ax)
     st.pyplot(fig)
@@ -138,11 +138,11 @@ def show_model_performance():
     if not st.session_state.models_trained:
         st.warning("Train the models first.")
         return
-    st.subheader("📊 Model Performance")
+    st.subheader("Model Performance")
     for name, report in st.session_state.models.items():
         st.markdown(f"#### {name}")
         st.dataframe(pd.DataFrame(report).transpose())
-        st.subheader("📊 Model Comparison: Precision, Recall & F1-Score")
+        st.subheader("Model Comparison: Precision, Recall & F1-Score")
 
     logreg_df = pd.DataFrame(st.session_state.models['Logistic Regression']).transpose()
     knn_df = pd.DataFrame(st.session_state.models['K-Nearest Neighbors']).transpose()
@@ -175,22 +175,22 @@ def show_recommendations():
     df = st.session_state.df
 
     if 'news' not in df.columns or 'type' not in df.columns:
-        st.error("❌ Required columns ('news', 'type') not found.")
+        st.error("Required columns ('news', 'type') not found")
         return
 
-    st.subheader("🔍 Choose Recommendation Mode")
+    st.subheader("Choose Recommendation Mode")
     mode = st.radio("How would you like to get recommendations?", ["By Category & Article", "By Custom Query"])
 
     tfidf = TfidfVectorizer(stop_words='english', max_features=8000, ngram_range=(1,2))
 
     if mode == "By Category & Article":
         all_categories = sorted(df['type'].unique())
-        category = st.selectbox("🗂️ Choose a news category:", all_categories)
+        category = st.selectbox("Choose a news category:", all_categories)
 
         filtered_df = df[df['type'] == category]
 
         if filtered_df.empty:
-            st.warning("⚠️ No articles available in this category.")
+            st.warning("No articles available in this category")
             return
 
         article_choices = {
@@ -198,21 +198,21 @@ def show_recommendations():
             for i, (idx, row) in enumerate(filtered_df.iterrows())
         }
 
-        selected_label = st.selectbox("📰 Choose an article:", list(article_choices.keys()))
+        selected_label = st.selectbox("Choose an article:", list(article_choices.keys()))
         selected_idx = article_choices[selected_label]
         selected_article = filtered_df.loc[selected_idx, 'news']
 
-        st.subheader("📝 You selected:")
+        st.subheader("Selected Article")
         st.write(selected_article)
 
         recommendations = get_recommendations(selected_article, df, tfidf, top_n=7)
 
-        st.subheader("🔁 You may also like:")
+        st.subheader("Recommended Articles")
         for i, rec in enumerate(recommendations['news']):
             st.markdown(f""" <div class="block"> <b>{i+1}.</b> {rec[:250]}...</div> """, unsafe_allow_html=True)
 
     elif mode == "By Custom Query":
-        user_input = st.text_area("📝 Enter your news interest or custom query:")
+        user_input = st.text_area("Enter your news interest or custom query")
 
         if user_input.strip():
             tfidf_matrix = tfidf.fit_transform(df['news'])
@@ -222,12 +222,12 @@ def show_recommendations():
             top_indices = cosine_similarities.argsort()[::-1][:7]
             top_scores = cosine_similarities[top_indices]
 
-            st.subheader("🔁 Top Matches Based on Your Input:")
+            st.subheader("Top Matches Based on Your Input")
             for i, idx in enumerate(top_indices):
                 score_percent = round(top_scores[i] * 100, 2)
                 st.markdown(f"**{i+1}. ({score_percent}% match)** {df.iloc[idx]['news'][:250]}...")
         else:
-            st.info("⌨️ Enter a query above to get personalized article suggestions.")
+            st.info("Enter a query above to get personalized article suggestions")
 
 
 # Home
