@@ -17,53 +17,99 @@ st.set_page_config(page_title="Personalized News Finder", page_icon="", layout="
 
 st.markdown("""
 <style>
-/* App background */
+/* ===== Global ===== */
 .stApp {
-    background: linear-gradient(135deg, #0f172a, #1e293b);
-    color: #e2e8f0;
+    background: linear-gradient(135deg, #0b1220 0%, #111827 50%, #0b1220 100%);
+    color: #e5e7eb;
+}
+
+/* Container spacing */
+.block-container {
+    padding-top: 1.5rem;
 }
 
 /* Headings */
 h1, h2, h3 {
-    color: #f8fafc;
+    color: #f9fafb;
     font-weight: 600;
-}
-
-/* Buttons */
-.stButton > button {
-    background: #2563eb;
-    color: white;
-    border-radius: 8px;
-    padding: 10px 18px;
-    border: none;
-    transition: 0.3s;
-}
-.stButton > button:hover {
-    background: #1d4ed8;
-}
-
-/* Input box */
-textarea {
-    border-radius: 8px !important;
-}
-
-/* Cards */
-.card {
-    background-color: #1e293b;
-    padding: 18px;
-    border-radius: 12px;
-    margin-bottom: 12px;
-    border: 1px solid #334155;
-}
-
-/* Sidebar */
-section[data-testid="stSidebar"] {
-    background-color: #020617;
+    letter-spacing: 0.2px;
 }
 
 /* Divider */
 hr {
-    border: 1px solid #334155;
+    border: 1px solid #1f2937;
+}
+
+/* ===== Cards ===== */
+.card {
+    background: rgba(17, 24, 39, 0.75);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    padding: 18px 20px;
+    border-radius: 14px;
+    border: 1px solid #1f2937;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+    margin-bottom: 14px;
+}
+
+.card-title {
+    font-size: 0.95rem;
+    color: #9ca3af;
+    margin-bottom: 6px;
+}
+
+.card-value {
+    font-size: 1.4rem;
+    color: #f3f4f6;
+    font-weight: 600;
+}
+
+/* ===== Buttons ===== */
+.stButton > button {
+    background: linear-gradient(135deg, #2563eb, #4f46e5);
+    color: #ffffff;
+    border-radius: 10px;
+    padding: 10px 18px;
+    border: 1px solid #1f2937;
+    transition: all 0.25s ease;
+}
+.stButton > button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 18px rgba(37, 99, 235, 0.35);
+}
+
+/* ===== Inputs ===== */
+textarea, .stTextInput > div > div > input {
+    background-color: #020617 !important;
+    color: #e5e7eb !important;
+    border-radius: 10px !important;
+    border: 1px solid #1f2937 !important;
+}
+
+/* ===== Select & Radio ===== */
+.stSelectbox, .stRadio {
+    background: transparent;
+}
+
+/* ===== Sidebar ===== */
+section[data-testid="stSidebar"] {
+    background: linear-gradient(180deg, #020617 0%, #020617 100%);
+    border-right: 1px solid #1f2937;
+}
+
+/* ===== Tables ===== */
+[data-testid="stDataFrame"] {
+    border: 1px solid #1f2937;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+/* ===== Metric (if used) ===== */
+[data-testid="stMetric"] {
+    background: rgba(17, 24, 39, 0.75);
+    border: 1px solid #1f2937;
+    border-radius: 12px;
+    padding: 10px;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -127,11 +173,15 @@ def show_dataset_overview():
     df = st.session_state.df
     st.markdown("## Dataset Overview")
     st.markdown("Explore the dataset used for training the model.")
+    st.markdown('<div class="card">', unsafe_allow_html=True)
     st.dataframe(df.head())
+    st.markdown('</div>', unsafe_allow_html=True)
+    st.markdown('<div class="card">', unsafe_allow_html=True)
     st.subheader("Category Distribution")
     fig, ax = plt.subplots()
     sns.countplot(data=df, y='type', order=df['type'].value_counts().index, ax=ax)
     st.pyplot(fig)
+    st.markdown('</div>', unsafe_allow_html=True)
 
 # Model performance
 def show_model_performance():
@@ -140,8 +190,10 @@ def show_model_performance():
         return
     st.subheader("Model Performance")
     for name, report in st.session_state.models.items():
+        st.markdown('<div class="card">', unsafe_allow_html=True)
         st.markdown(f"#### {name}")
         st.dataframe(pd.DataFrame(report).transpose())
+        st.markdown('</div>', unsafe_allow_html=True)
         st.subheader("Model Comparison: Precision, Recall & F1-Score")
 
     logreg_df = pd.DataFrame(st.session_state.models['Logistic Regression']).transpose()
@@ -151,6 +203,7 @@ def show_model_performance():
     metrics = ['precision', 'recall', 'f1-score']
 
     for metric in metrics:
+        st.markdown('<div class="card">', unsafe_allow_html=True)
         fig, ax = plt.subplots(figsize=(8, 4))
         ax.bar(label_rows, logreg_df.loc[label_rows, metric], alpha=0.6, label='Logistic Regression')
         ax.bar(label_rows, knn_df.loc[label_rows, metric], alpha=0.6, label='KNN', bottom=logreg_df.loc[label_rows, metric] * 0)
@@ -161,6 +214,7 @@ def show_model_performance():
         ax.set_ylim(0, 1.05)
         plt.xticks(rotation=45)
         st.pyplot(fig)
+        st.markdown('</div>', unsafe_allow_html=True)
     
 def get_recommendations(user_article, df, tfidf_vectorizer, top_n=7):
     tfidf_matrix = tfidf_vectorizer.fit_transform(df['news'])
@@ -202,14 +256,16 @@ def show_recommendations():
         selected_idx = article_choices[selected_label]
         selected_article = filtered_df.loc[selected_idx, 'news']
 
+        st.markdown('<div class="card">', unsafe_allow_html=True)
         st.subheader("Selected Article")
         st.write(selected_article)
+        st.markdown('</div>', unsafe_allow_html=True)
 
         recommendations = get_recommendations(selected_article, df, tfidf, top_n=7)
 
         st.subheader("Recommended Articles")
         for i, rec in enumerate(recommendations['news']):
-            st.markdown(f""" <div class="block"> <b>{i+1}.</b> {rec[:250]}...</div> """, unsafe_allow_html=True)
+            st.markdown(f""" <div class="card"> <b>{i+1}.</b> {rec[:250]}...</div> """, unsafe_allow_html=True)
 
     elif mode == "By Custom Query":
         user_input = st.text_area("Enter your news interest or custom query")
@@ -240,12 +296,15 @@ def show_home():
     col1, col2, col3 = st.columns(3)
 
     with col1:
+        st.markdown('<div class="card">', unsafe_allow_html=True)
         st.markdown("### Step 1")
         st.markdown("Load dataset")
         if st.button("Load Dataset"):
             load_dataset()
+        st.markdown('</div>', unsafe_allow_html=True)
 
     with col2:
+        st.markdown('<div class="card">', unsafe_allow_html=True)
         st.markdown("### Step 2")
         st.markdown("Train models")
         if st.button("Train Models"):
@@ -253,8 +312,10 @@ def show_home():
                 train_models()
             else:
                 st.warning("Load dataset first")
+        st.markdown('</div>', unsafe_allow_html=True)
 
     with col3:
+        st.markdown('<div class="card">', unsafe_allow_html=True)
         st.markdown("### Step 3")
         st.markdown("View performance")
         if st.button("Show Performance"):
@@ -262,6 +323,7 @@ def show_home():
                 show_model_performance()
             else:
                 st.warning("Train models first")
+        st.markdown('</div>', unsafe_allow_html=True)
 
     st.markdown("---")
 
@@ -313,9 +375,11 @@ def show_prediction():
         """, unsafe_allow_html=True)
 
         # Probabilities
+        st.markdown('<div class="card">', unsafe_allow_html=True)
         st.markdown("### Category Probabilities")
         for label, prob in zip(model.classes_, probs):
             st.write(f"{label}: {round(prob*100,2)}%")
+        st.markdown('</div>', unsafe_allow_html=True)
 
         # Keywords
         feature_names = tfidf.get_feature_names_out()
@@ -323,8 +387,10 @@ def show_prediction():
         top_idx = scores.argsort()[-5:][::-1]
         keywords = [feature_names[i] for i in top_idx]
 
+        st.markdown('<div class="card">', unsafe_allow_html=True)
         st.markdown("### Keywords")
         st.write(", ".join(keywords))
+        st.markdown('</div>', unsafe_allow_html=True)
 
 
 def main():
