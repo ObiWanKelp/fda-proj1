@@ -305,15 +305,12 @@ def show_home():
     col1, col2, col3 = st.columns(3)
 
     with col1:
-        st.markdown('<div class="card">', unsafe_allow_html=True)
         st.markdown("### Step 1")
         st.markdown("Load dataset")
         if st.button("Load Dataset"):
             load_dataset()
-        st.markdown('</div>', unsafe_allow_html=True)
 
     with col2:
-        st.markdown('<div class="card">', unsafe_allow_html=True)
         st.markdown("### Step 2")
         st.markdown("Train models")
         if st.button("Train Models"):
@@ -321,10 +318,8 @@ def show_home():
                 train_models()
             else:
                 st.warning("Load dataset first")
-        st.markdown('</div>', unsafe_allow_html=True)
 
     with col3:
-        st.markdown('<div class="card">', unsafe_allow_html=True)
         st.markdown("### Step 3")
         st.markdown("View performance")
         if st.button("Show Performance"):
@@ -332,7 +327,6 @@ def show_home():
                 show_model_performance()
             else:
                 st.warning("Train models first")
-        st.markdown('</div>', unsafe_allow_html=True)
 
     st.markdown("---")
 
