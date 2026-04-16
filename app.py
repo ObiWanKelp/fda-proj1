@@ -122,11 +122,14 @@ section[data-testid="stSidebar"] .stRadio > div {
 
 section[data-testid="stSidebar"] label {
     background: rgba(30, 41, 59, 0.6);
-    padding: 10px 12px;
-    border-radius: 10px;
+    padding: 12px 14px;
+    border-radius: 12px;
     border: 1px solid transparent;
     transition: all 0.2s ease;
     display: block;
+    min-height: 45px;
+    display: flex;
+    align-items: center;
 }
 
 /* Hover effect */
@@ -138,7 +141,8 @@ section[data-testid="stSidebar"] label:hover {
 /* Selected option */
 section[data-testid="stSidebar"] input[type="radio"]:checked + div {
     border: 1px solid #6366f1 !important;
-    background: rgba(99, 102, 241, 0.2) !important;
+    background: rgba(99, 102, 241, 0.25) !important;
+    border-radius: 12px !important;
 }
 
 /* ===== Tables ===== */
