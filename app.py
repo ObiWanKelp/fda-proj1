@@ -17,22 +17,53 @@ st.set_page_config(page_title="Personalized News Finder", page_icon="📰", layo
 
 st.markdown("""
 <style>
-.main {
-    background-color: #0E1117;
+/* App background */
+.stApp {
+    background: linear-gradient(135deg, #0f172a, #1e293b);
+    color: #e2e8f0;
 }
+
+/* Headings */
 h1, h2, h3 {
-    color: #ffffff;
+    color: #f8fafc;
+    font-weight: 600;
 }
-.stButton>button {
-    border-radius: 10px;
-    padding: 10px 20px;
-    font-weight: bold;
+
+/* Buttons */
+.stButton > button {
+    background: #2563eb;
+    color: white;
+    border-radius: 8px;
+    padding: 10px 18px;
+    border: none;
+    transition: 0.3s;
 }
-.block {
-    background-color: #1c1f26;
-    padding: 20px;
+.stButton > button:hover {
+    background: #1d4ed8;
+}
+
+/* Input box */
+textarea {
+    border-radius: 8px !important;
+}
+
+/* Cards */
+.card {
+    background-color: #1e293b;
+    padding: 18px;
     border-radius: 12px;
-    margin-bottom: 15px;
+    margin-bottom: 12px;
+    border: 1px solid #334155;
+}
+
+/* Sidebar */
+section[data-testid="stSidebar"] {
+    background-color: #020617;
+}
+
+/* Divider */
+hr {
+    border: 1px solid #334155;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -201,59 +232,68 @@ def show_recommendations():
 
 # Home
 def show_home():
-    st.title("📰 Personalized News Finder")
-    st.markdown("### 🚀 AI-powered News Classification & Recommendation")
+    st.title("Personalized News Finder")
+    st.markdown("Machine Learning based News Classification and Recommendation System")
 
     st.markdown("---")
 
     col1, col2, col3 = st.columns(3)
 
     with col1:
-        st.markdown("### 📂 Step 1")
+        st.markdown("### Step 1")
+        st.markdown("Load dataset")
         if st.button("Load Dataset"):
             load_dataset()
 
     with col2:
-        st.markdown("### 🤖 Step 2")
+        st.markdown("### Step 2")
+        st.markdown("Train models")
         if st.button("Train Models"):
             if st.session_state.data_loaded:
                 train_models()
             else:
-                st.warning("Load dataset first!")
+                st.warning("Load dataset first")
 
     with col3:
-        st.markdown("### 📊 Step 3")
+        st.markdown("### Step 3")
+        st.markdown("View performance")
         if st.button("Show Performance"):
             if st.session_state.models_trained:
                 show_model_performance()
             else:
-                st.warning("Train models first!")
+                st.warning("Train models first")
 
     st.markdown("---")
 
-    st.markdown("### ✨ Features")
+    st.markdown("### System Features")
     st.markdown("""
-    - 🧠 ML-based news classification  
-    - 📊 Model performance comparison  
-    - 🔁 Smart recommendations using cosine similarity  
+    - News classification using TF-IDF and Logistic Regression  
+    - Model performance comparison  
+    - Content-based recommendation system  
     """)
-
-    st.markdown("---")
 
 def show_prediction():
     if not st.session_state.models_trained:
         st.warning("Train the model first.")
         return
 
-    st.markdown("## 🧠 News Category Prediction")
+    st.markdown("## News Category Prediction")
 
-    user_input = st.text_area("📝 Enter a news article:")
+    user_input = st.text_area(
+        "Enter a news article",
+        placeholder="Enter a news article here..."
+    )
 
     if user_input.strip():
         df = st.session_state.df
 
-        # Train TF-IDF + model (quick reuse approach)
-        tfidf = TfidfVectorizer(stop_words='english', max_features=8000, ngram_range=(1,2))
+        # TF-IDF with n-grams
+        tfidf = TfidfVectorizer(
+            stop_words='english',
+            max_features=8000,
+            ngram_range=(1,2)
+        )
+
         X = tfidf.fit_transform(df['news'])
         y = df['type']
 
@@ -264,11 +304,16 @@ def show_prediction():
         prediction = model.predict(user_vec)[0]
         probs = model.predict_proba(user_vec)[0]
 
-        st.success(f"📰 Predicted Category: {prediction}")
-        st.info(f"📊 Confidence: {round(max(probs)*100,2)}%")
+        # 🔥 Result Card
+        st.markdown(f"""
+        <div class="card">
+            <b>Predicted Category:</b> {prediction}<br><br>
+            <b>Confidence:</b> {round(max(probs)*100,2)}%
+        </div>
+        """, unsafe_allow_html=True)
 
-        # Show probabilities
-        st.subheader("📈 Category Probabilities")
+        # Probabilities
+        st.markdown("### Category Probabilities")
         for label, prob in zip(model.classes_, probs):
             st.write(f"{label}: {round(prob*100,2)}%")
 
@@ -278,10 +323,10 @@ def show_prediction():
         top_idx = scores.argsort()[-5:][::-1]
         keywords = [feature_names[i] for i in top_idx]
 
-        st.subheader("🔑 Keywords")
+        st.markdown("### Keywords")
         st.write(", ".join(keywords))
 
-# Main
+
 def main():
     st.sidebar.title("Navigation")
     page = st.sidebar.radio("Go to", [
