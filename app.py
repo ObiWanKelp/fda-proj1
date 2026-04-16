@@ -89,22 +89,19 @@ def train_models():
     st.success("✅ Models trained successfully!")
 
 # Dataset overview
- def show_dataset_overview():
+def show_dataset_overview():
     if not st.session_state.data_loaded:
         st.warning("Load the dataset first.")
         return
-
     df = st.session_state.df
-
     st.markdown("## 📊 Dataset Overview")
     st.markdown("Explore the dataset used for training the model.")
-
     st.dataframe(df.head())
-
     st.subheader("🗂️ Category Distribution")
     fig, ax = plt.subplots()
     sns.countplot(data=df, y='type', order=df['type'].value_counts().index, ax=ax)
     st.pyplot(fig)
+
 
 # Model performance
 def show_model_performance():
