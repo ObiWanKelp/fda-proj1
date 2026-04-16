@@ -15,6 +15,28 @@ nltk.download('stopwords')
 
 st.set_page_config(page_title="Personalized News Finder", page_icon="📰", layout="wide")
 
+st.markdown("""
+<style>
+.main {
+    background-color: #0E1117;
+}
+h1, h2, h3 {
+    color: #ffffff;
+}
+.stButton>button {
+    border-radius: 10px;
+    padding: 10px 20px;
+    font-weight: bold;
+}
+.block {
+    background-color: #1c1f26;
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 15px;
+}
+</style>
+""", unsafe_allow_html=True)
+
 # Initialize session state
 for key in ['data_loaded', 'models_trained', 'df', 'models']:
     if key not in st.session_state:
@@ -67,13 +89,18 @@ def train_models():
     st.success("✅ Models trained successfully!")
 
 # Dataset overview
-def show_dataset_overview():
+ def show_dataset_overview():
     if not st.session_state.data_loaded:
         st.warning("Load the dataset first.")
         return
+
     df = st.session_state.df
-    st.subheader("📊 Dataset Preview")
+
+    st.markdown("## 📊 Dataset Overview")
+    st.markdown("Explore the dataset used for training the model.")
+
     st.dataframe(df.head())
+
     st.subheader("🗂️ Category Distribution")
     fig, ax = plt.subplots()
     sns.countplot(data=df, y='type', order=df['type'].value_counts().index, ax=ax)
@@ -155,7 +182,7 @@ def show_recommendations():
 
         st.subheader("🔁 You may also like:")
         for i, rec in enumerate(recommendations['news']):
-            st.markdown(f"**{i+1}.** {rec[:250]}...")
+            st.markdown(f""" <div class="block"> <b>{i+1}.</b> {rec[:250]}...</div> """, unsafe_allow_html=True)
 
     elif mode == "By Custom Query":
         user_input = st.text_area("📝 Enter your news interest or custom query:")
@@ -179,36 +206,43 @@ def show_recommendations():
 # Home
 def show_home():
     st.title("📰 Personalized News Finder")
-    st.caption("AI-Powered News Classification and Recommendation System")
-    col1, col2 = st.columns(2)
+    st.markdown("### 🚀 AI-powered News Classification & Recommendation")
+
+    st.markdown("---")
+
+    col1, col2, col3 = st.columns(3)
+
     with col1:
-        st.markdown("### 🎯 Features")
-        st.markdown("- Text classification with Logistic Regression and KNN\\n"
-                    "- Interactive dataset exploration\\n"
-                    "- Cosine similarity-based recommendations")
-    with col2:
-        st.markdown("### 🚀 Get Started")
-        st.markdown("1. Load the dataset\\n"
-                    "2. Train the models\\n"
-                    "3. Evaluate model performance\\n"
-                    "4. Get recommendations")
-    st.markdown("### ⚡ Quick Actions")
-    c1, c2, c3 = st.columns(3)
-    with c1:
-        if st.button("📂 Load Dataset"):
+        st.markdown("### 📂 Step 1")
+        if st.button("Load Dataset"):
             load_dataset()
-    with c2:
-        if st.button("🤖 Train Models"):
+
+    with col2:
+        st.markdown("### 🤖 Step 2")
+        if st.button("Train Models"):
             if st.session_state.data_loaded:
                 train_models()
             else:
-                st.warning("Please load the dataset first!")
-    with c3:
-        if st.button("📈 Show Performance"):
+                st.warning("Load dataset first!")
+
+    with col3:
+        st.markdown("### 📊 Step 3")
+        if st.button("Show Performance"):
             if st.session_state.models_trained:
                 show_model_performance()
             else:
-                st.warning("Please train the models first!")
+                st.warning("Train models first!")
+
+    st.markdown("---")
+
+    st.markdown("### ✨ Features")
+    st.markdown("""
+    - 🧠 ML-based news classification  
+    - 📊 Model performance comparison  
+    - 🔁 Smart recommendations using cosine similarity  
+    """)
+
+    st.markdown("---")
 
 # Main
 def main():
