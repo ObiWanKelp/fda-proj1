@@ -102,8 +102,43 @@ textarea, .stTextInput > div > div > input {
 
 /* ===== Sidebar ===== */
 section[data-testid="stSidebar"] {
-    background: linear-gradient(180deg, #020617 0%, #020617 100%);
+    background: linear-gradient(180deg, #020617 0%, #0f172a 100%);
     border-right: 1px solid #334155;
+    padding-top: 20px;
+}
+
+/* Sidebar title */
+section[data-testid="stSidebar"] h1 {
+    font-size: 20px;
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 20px;
+}
+
+/* Radio buttons (navigation items) */
+section[data-testid="stSidebar"] .stRadio > div {
+    gap: 10px;
+}
+
+section[data-testid="stSidebar"] label {
+    background: rgba(30, 41, 59, 0.6);
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid transparent;
+    transition: all 0.2s ease;
+    display: block;
+}
+
+/* Hover effect */
+section[data-testid="stSidebar"] label:hover {
+    border: 1px solid #3b82f6;
+    background: rgba(59, 130, 246, 0.15);
+}
+
+/* Selected option */
+section[data-testid="stSidebar"] input[type="radio"]:checked + div {
+    border: 1px solid #6366f1 !important;
+    background: rgba(99, 102, 241, 0.2) !important;
 }
 
 /* ===== Tables ===== */
