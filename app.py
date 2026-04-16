@@ -42,7 +42,7 @@ for key in ['data_loaded', 'models_trained', 'df', 'models']:
     if key not in st.session_state:
         st.session_state[key] = False if 'loaded' in key or 'trained' in key else None if key == 'df' else {}
 
-# Load datasetdef load_dataset():
+# Load dataset
 def load_dataset():
     url = "https://raw.githubusercontent.com/suraj-deshmukh/BBC-Dataset-News-Classification/master/dataset/dataset.csv"
     try:
@@ -101,7 +101,6 @@ def show_dataset_overview():
     fig, ax = plt.subplots()
     sns.countplot(data=df, y='type', order=df['type'].value_counts().index, ax=ax)
     st.pyplot(fig)
-
 
 # Model performance
 def show_model_performance():
@@ -241,11 +240,52 @@ def show_home():
 
     st.markdown("---")
 
+def show_prediction():
+    if not st.session_state.models_trained:
+        st.warning("Train the model first.")
+        return
+
+    st.markdown("## 🧠 News Category Prediction")
+
+    user_input = st.text_area("📝 Enter a news article:")
+
+    if user_input.strip():
+        df = st.session_state.df
+
+        # Train TF-IDF + model (quick reuse approach)
+        tfidf = TfidfVectorizer(stop_words='english', max_features=5000)
+        X = tfidf.fit_transform(df['news'])
+        y = df['type']
+
+        model = LogisticRegression(max_iter=1000)
+        model.fit(X, y)
+
+        user_vec = tfidf.transform([user_input])
+        prediction = model.predict(user_vec)[0]
+        probs = model.predict_proba(user_vec)[0]
+
+        st.success(f"📰 Predicted Category: {prediction}")
+        st.info(f"📊 Confidence: {round(max(probs)*100,2)}%")
+
+        # Show probabilities
+        st.subheader("📈 Category Probabilities")
+        for label, prob in zip(model.classes_, probs):
+            st.write(f"{label}: {round(prob*100,2)}%")
+
+        # Keywords
+        feature_names = tfidf.get_feature_names_out()
+        scores = user_vec.toarray()[0]
+        top_idx = scores.argsort()[-5:][::-1]
+        keywords = [feature_names[i] for i in top_idx]
+
+        st.subheader("🔑 Keywords")
+        st.write(", ".join(keywords))
+
 # Main
 def main():
     st.sidebar.title("Navigation")
     page = st.sidebar.radio("Go to", [
-        "Home", "Dataset Overview", "Model Performance", "Personalized Recommendations"
+        "Home", "Dataset Overview", "Model Performance", "News Prediction", "Personalized Recommendations"
     ])
     if page == "Home":
         show_home()
@@ -253,6 +293,8 @@ def main():
         show_dataset_overview()
     elif page == "Model Performance":
         show_model_performance()
+    elif page == "News Prediction":
+      show_prediction()
     elif page == "Personalized Recommendations":
         show_recommendations()
 
